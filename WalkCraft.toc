@@ -1,0 +1,9 @@
+## Interface: 11302
+## Title : WalkCraft
+## Notes: You're already in the magic World Of Walking , why not track it your steps like a boss?
+## Author: Erik Zaadi
+## Version: 1.0
+## Dependencies:
+## SavedVariablesPerCharacter: WoWFitnessPrefs
+
+WalkCraft.lua
