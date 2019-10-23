@@ -60,10 +60,24 @@ function WalkCraft.CalculateSteps(newVector, lastVector)
 	local lastX, lastY = lastVector:GetXY();
     local xDist = lastX - newX;
     local yDist = lastY - newY;
-    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) ) * 100 * 4
 end
 
 function WalkCraft.UpdateSteps(newVector)
+    -- ceil(select(1,GetUnitSpeed("player"))/7*100) - get speed in percent
+    if UnitOnTaxi('player') then
+        WalkCraft.Log('Not updating steps, on taxi');
+        WalkCraft.lastVector = false;
+        return
+    end
+
+    if IsMounted() then
+        WalkCraft.Log('Not updating steps, mounted');
+        WalkCraft.lastVector = false;
+        return
+    end
+
+
     local currentValue = WalkCraft.GetSteps()
     if WalkCraft.lastVector then
         local steps = WalkCraft.CalculateSteps(newVector, WalkCraft.lastVector);
