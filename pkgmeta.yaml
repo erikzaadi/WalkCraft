@@ -1,0 +1,4 @@
+---
+manual-changelog: CHANGELOG
+license-output: LICENSE
+ignore: ./troll-runner.gif
