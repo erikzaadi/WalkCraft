@@ -48,7 +48,7 @@ function WalkCraft.OnReady()
 end
 
 function WalkCraft.GetTodaysStepsIndex()
-    return date("%Y-%M-%d");
+    return date("%Y-%m-%d");
 end
 
 function WalkCraft.GetSteps()
@@ -60,7 +60,7 @@ function WalkCraft.CalculateSteps(newVector, lastVector)
 	local lastX, lastY = lastVector:GetXY();
     local xDist = lastX - newX;
     local yDist = lastY - newY;
-    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) ) * 100 * 4
+    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) ) * 100 * 4 -- 4 being a magic number here
 end
 
 function WalkCraft.UpdateSteps(newVector)
