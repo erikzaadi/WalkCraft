@@ -3,6 +3,6 @@
 ## Notes: You're already in the magic World Of Walking, why not track your steps like a boss?
 ## Author: Erik Zaadi
 ## Version: @project-version@
-## SavedVariablesPerCharacter: WoWFitnessPrefs
+## SavedVariablesPerCharacter: WalkCraftPrefs
 
 WalkCraft.lua

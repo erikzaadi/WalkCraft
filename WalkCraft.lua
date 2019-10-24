@@ -1,9 +1,10 @@
 -- Based on https://github.com/iamcal/wow-NewAddon
 WalkCraft = {};
 WalkCraft.version = "@project-version@";
+WalkCraft.installed_version = '';
 WalkCraft.debug = false;
 --@debug@
-WalkCraft.debug = true;
+WalkCraft.debug = false;
 ----@end-debug@
 WalkCraft.fully_loaded = false;
 WalkCraft.state = {}
@@ -35,16 +36,31 @@ function WalkCraft.OnReady()
     WalkCraft.Log('OnReady');
 
     -- set up default options
-    _G.WoWFitnessPrefs = _G.WoWFitnessPrefs or {};
+    _G.WalkCraftPrefs = _G.WalkCraftPrefs or {};
 
     for k,v in pairs(WalkCraft.default_options) do
-        if (not _G.WoWFitnessPrefs[k]) then
-            _G.WoWFitnessPrefs[k] = v;
+        if (not _G.WalkCraftPrefs[k]) then
+            _G.WalkCraftPrefs[k] = v;
         end
     end
-    WalkCraft.state = WoWFitnessPrefs.state or {}
+    WalkCraft.state = WalkCraftPrefs.state or {}
+
+    WalkCraft.installed_version = WalkCraftPrefs.installed_version or '';
+
+    WalkCraft.SendWelcomeNoteIfNeeded();
 
     WalkCraft.CreateUIFrame();
+
+end
+
+function WalkCraft.SendWelcomeNoteIfNeeded()
+    if WalkCraft.installed_version == '' then
+        print(string.format("Welcome to WalkCraft %s!", WalkCraft.version));
+    end
+    if WalkCraft.installed_version ~= WalkCraft.version then
+        print(string.format("WalkCraft has been updated to %s", WalkCraft.version));
+    end
+    WalkCraft.installed_version = WalkCraft.version;
 end
 
 function WalkCraft.GetTodaysStepsIndex()
@@ -91,11 +107,12 @@ function WalkCraft.OnSaving()
 
     if (WalkCraft.UIFrame) then
         local point, relativeTo, relativePoint, xOfs, yOfs = WalkCraft.UIFrame:GetPoint()
-        _G.WoWFitnessPrefs.frameRef = relativePoint;
-        _G.WoWFitnessPrefs.frameX = xOfs;
-        _G.WoWFitnessPrefs.frameY = yOfs;
+        _G.WalkCraftPrefs.frameRef = relativePoint;
+        _G.WalkCraftPrefs.frameX = xOfs;
+        _G.WalkCraftPrefs.frameY = yOfs;
     end
-    _G.WoWFitnessPrefs.state = WalkCraft.state;
+    WalkCraftPrefs.state = WalkCraft.state;
+    WalkCraftPrefs.installed_version = WalkCraft.installed_version;
 end
 
 function WalkCraft.OnUpdate()
@@ -103,7 +120,7 @@ function WalkCraft.OnUpdate()
         return;
     end
 
-    if (WoWFitnessPrefs.hide) then
+    if (WalkCraftPrefs.hide) then
         return;
     end
 
@@ -140,8 +157,8 @@ function WalkCraft.CreateUIFrame()
     -- create the UI frame
     WalkCraft.UIFrame = CreateFrame("Frame",nil,UIParent);
     WalkCraft.UIFrame:SetFrameStrata("BACKGROUND")
-    WalkCraft.UIFrame:SetWidth(_G.WoWFitnessPrefs.frameW);
-    WalkCraft.UIFrame:SetHeight(_G.WoWFitnessPrefs.frameH);
+    WalkCraft.UIFrame:SetWidth(_G.WalkCraftPrefs.frameW);
+    WalkCraft.UIFrame:SetHeight(_G.WalkCraftPrefs.frameH);
 
     -- make it black
     WalkCraft.UIFrame.texture = WalkCraft.UIFrame:CreateTexture();
@@ -149,7 +166,7 @@ function WalkCraft.CreateUIFrame()
     WalkCraft.UIFrame.texture:SetTexture(0, 0, 0);
 
     -- position it
-    WalkCraft.UIFrame:SetPoint(_G.WoWFitnessPrefs.frameRef, _G.WoWFitnessPrefs.frameX, _G.WoWFitnessPrefs.frameY);
+    WalkCraft.UIFrame:SetPoint(_G.WalkCraftPrefs.frameRef, _G.WalkCraftPrefs.frameX, _G.WalkCraftPrefs.frameY);
 
     -- make it draggable
     WalkCraft.UIFrame:SetMovable(true);
@@ -159,8 +176,8 @@ function WalkCraft.CreateUIFrame()
     WalkCraft.Cover = CreateFrame("Button", nil, WalkCraft.UIFrame);
     WalkCraft.Cover:SetFrameLevel(128);
     WalkCraft.Cover:SetPoint("TOPLEFT", 0, 0);
-    WalkCraft.Cover:SetWidth(_G.WoWFitnessPrefs.frameW);
-    WalkCraft.Cover:SetHeight(_G.WoWFitnessPrefs.frameH);
+    WalkCraft.Cover:SetWidth(_G.WalkCraftPrefs.frameW);
+    WalkCraft.Cover:SetHeight(_G.WalkCraftPrefs.frameH);
     WalkCraft.Cover:EnableMouse(true);
     WalkCraft.Cover:RegisterForClicks("AnyUp");
     WalkCraft.Cover:RegisterForDrag("LeftButton");
@@ -198,6 +215,9 @@ end
 
 function WalkCraft.OnClick(self, aButton)
     if (aButton == "RightButton") then
+        print('WAT');
+        print(string.format("Actual Version %s", WalkCraft.version));
+        print(string.format("Installed Version: %s", WalkCraft.installed_version));
         print(string.format("Current steps: %s", WalkCraft.GetSteps()));
     end
 end
