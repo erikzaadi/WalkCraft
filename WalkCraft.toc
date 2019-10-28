@@ -1,8 +1,11 @@
-## Interface: 11302
+## Interface: 35753
 ## Title : WalkCraft
 ## Notes: You're already in the magic World Of Walking, why not track your steps like a boss?
 ## Author: Erik Zaadi
 ## Version: @project-version@
 ## SavedVariablesPerCharacter: WalkCraftPrefs
+
+Libs/LibStub/LibStub.lua
+Libs/HereBeDragons/HereBeDragons-2.0.lua
 
 WalkCraft.lua

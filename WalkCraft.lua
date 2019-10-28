@@ -21,7 +21,7 @@ WalkCraft.default_options = {
     frameH = 200,
 };
 
-
+local HereBeDragons = LibStub("HereBeDragons-2.0");
 
 function WalkCraft.Log(logMessage)
     if not WalkCraft.debug then
@@ -71,16 +71,13 @@ function WalkCraft.GetSteps()
     return WalkCraft.state[WalkCraft.GetTodaysStepsIndex()] or 0
 end
 
-function WalkCraft.CalculateSteps(newVector, lastVector)
-	local newX, newY = newVector:GetXY();
-	local lastX, lastY = lastVector:GetXY();
-    local xDist = lastX - newX;
-    local yDist = lastY - newY;
-    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) ) * 100 * 4 -- 4 being a magic number here
+function WalkCraft.CalculateSteps(newXY, lastXY)
+    local xDist = lastXY.x - newXY.x;
+    local yDist = lastXY.y - newXY.y;
+    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) );
 end
 
-function WalkCraft.UpdateSteps(newVector)
-    -- ceil(select(1,GetUnitSpeed("player"))/7*100) - get speed in percent
+function WalkCraft.UpdateSteps()
     if UnitOnTaxi('player') then
         WalkCraft.Log('Not updating steps, on taxi');
         WalkCraft.lastVector = false;
@@ -93,13 +90,23 @@ function WalkCraft.UpdateSteps(newVector)
         return
     end
 
+    local speed = ceil(select(1,GetUnitSpeed("player"))/7*100)
 
+    if speed > 250 then -- max mount + trinkets is around 219
+        WalkCraft.Log(string.format("Not updating due to speed, probably ship/zeppelin, Speed: %d percent", speed))
+        return
+    end
+
+    local x,y = HereBeDragons.GetPlayerWorldPosition()
+    local newXY = {}
+    newXY.x = x;
+    newXY.y = y;
     local currentValue = WalkCraft.GetSteps()
-    if WalkCraft.lastVector then
-        local steps = WalkCraft.CalculateSteps(newVector, WalkCraft.lastVector);
+    if WalkCraft.lastXY then
+        local steps = WalkCraft.CalculateSteps(newXY, WalkCraft.lastXY);
         WalkCraft.state[WalkCraft.GetTodaysStepsIndex()] = currentValue + steps;
     end
-    WalkCraft.lastVector = newVector
+    WalkCraft.lastXY = newXY;
 end
 
 function WalkCraft.OnSaving()
@@ -225,15 +232,16 @@ end
 function WalkCraft.UpdateFrame()
 
     -- update the main frame state here
-    local vector = C_Map.GetPlayerMapPosition(WalkCraft.MapID, "player");
-    if vector then
-        WalkCraft.UpdateSteps(vector);
-    end
-    WalkCraft.Label:SetText(string.format("%d", WalkCraft.GetSteps()));
+    -- local vector = C_Map.GetPlayerMapPosition(WalkCraft.MapID, "player");
+    --
+    WalkCraft.UpdateSteps();
+
+    WalkCraft.Label:SetText(string.format("Steps:%d\nSpeed: %d", WalkCraft.GetSteps(), ceil(select(1,GetUnitSpeed("player"))/7*100)));
 end
 
 
 WalkCraft.EventFrame = CreateFrame("Frame");
+-- WalkCraft.MapID = C_Map.GetBestMapForUnit("player");
 WalkCraft.MapID = MapUtil.GetDisplayableMapForPlayer();
 WalkCraft.EventFrame:Show();
 WalkCraft.EventFrame:SetScript("OnEvent", WalkCraft.OnEvent);

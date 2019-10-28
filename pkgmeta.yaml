@@ -1,4 +1,12 @@
 ---
 manual-changelog: CHANGELOG
 license-output: LICENSE
-ignore: ./troll-runner.gif
+ignore:
+    - ./troll-runner.gif
+externals:
+    libs/LibStub:
+        url: svn://svn.wowace.com/wow/libstub/mainline/trunk
+        tag: latest
+    libs/HereBeDragons:
+        url: https://repos.wowace.com/wow/herebedragons
+        tag: 2.02-release
