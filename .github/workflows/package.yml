@@ -2,8 +2,8 @@ name: Package Addon
 
 on:
   push:
-    branches: [master]
     tags: ["*"]
+    branches: ["*"]
 
 jobs:
   lint:
@@ -18,8 +18,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Create Package
+      - name: Validate Package
         run: ./ci.sh
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.GH_TOKEN }}
+      - name: Create Package
+        run: ./ci.sh RELEASE-THE-HOUNDS
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
