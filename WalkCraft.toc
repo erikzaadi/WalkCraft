@@ -4,6 +4,8 @@
 ## Author: Erik Zaadi
 ## Version: @project-version@
 ## SavedVariablesPerCharacter: WalkCraftPrefs
+## X-Curse-Project-ID: 348965
+## X-WoWI-ID: [wowi-addon-id]
 
 Libs/LibStub/LibStub.lua
 Libs/HereBeDragons/HereBeDragons-2.0.lua
